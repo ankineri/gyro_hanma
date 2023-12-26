@@ -290,6 +290,10 @@ void SoftwareSerial::setTX(uint8_t tx)
 
 void SoftwareSerial::setRX(uint8_t rx)
 {
+  if (rx == 0) {
+    _receivePin = 0;
+    return;
+  }
   pinMode(rx, INPUT);
   if (!_inverse_logic)
     digitalWrite(rx, HIGH);  // pullup for normal logic!
@@ -325,7 +329,7 @@ void SoftwareSerial::begin(long speed)
   _tx_delay = subtract_cap(bit_delay, 15 / 4);
 
   // Only setup rx when we have a valid PCINT for this pin
-  if (digitalPinToPCICR((int8_t)_receivePin)) {
+  if (_receivePin && digitalPinToPCICR((int8_t)_receivePin)) {
     #if GCC_VERSION > 40800
     // Timings counted from gcc 4.8.2 output. This works up to 115200 on
     // 16Mhz and 57600 on 8Mhz.
