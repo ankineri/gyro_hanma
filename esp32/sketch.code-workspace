@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "../sketch"
+		},
+		{
+			"name": "gyro",
+			"path": "gyro"
+		},
+		{
+			"name": "esp32",
+			"path": "."
+		}
+	],
+	"settings": {}
+}

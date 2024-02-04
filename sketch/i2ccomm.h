@@ -1,15 +1,14 @@
 #pragma once
 #include <Wire.h>
 #include "sensors.h"
+#include "wheel.h"
 #define I2C_ADDRESS 8
 #define I2C_MAX_STALENESS 1000
 
 class I2CComm
 {
-    uint16_t battery_voltage = 0;
-    uint16_t charger_voltage = 0;
-    int16_t left_speed = 0;
-    int16_t right_speed = 0;
+    Wheel* left_wheel;
+    Wheel* right_wheel;
     unsigned long last_received_at = 0;
     void requestEvent();
 
@@ -20,9 +19,8 @@ class I2CComm
 
 public:
     void init();
-    void setVoltages(uint16_t battery_voltage, uint16_t charger_voltage);
-    int16_t getLeftSpeed();
-    int16_t getRightSpeed();
+    void step();
+    I2CComm(Wheel* left_wheel, Wheel* right_wheel);
 };
 void requestEvent();
 void receiveEvent(int howMany);

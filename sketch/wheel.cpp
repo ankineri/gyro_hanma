@@ -22,14 +22,23 @@ Wheel::Wheel(int pin_output, int pin_input) : ss(pin_input, pin_output)
 {
 }
 
-void Wheel::setSpeed(int16_t speed)
+void Wheel::setSpeed(uint16_t speed)
 {
-    this->desired_speed = speed;
+    this->desired_speed = ((int32_t)speed) - 0x8000;
+}
+
+void Wheel::setAcceleration(uint16_t acceleration)
+{
+    this->acceleration = acceleration;
 }
 
 void Wheel::step()
 {
-    int16_t diff = (millis() - last_step) * ACCELERATION / 1000;
+    if (acceleration == 0) {
+        send(0);
+        return;
+    }
+    int16_t diff = (millis() - last_step) * 300 / 1000;
     if (diff > 2)
     {
         last_step = millis();
@@ -50,8 +59,7 @@ void Wheel::step()
             }
         }
     }
-    send((uint16_t)(speed));
-    // sleep(100);
+    send(*(uint16_t*)(&speed));
 }
 
 void Wheel::init()

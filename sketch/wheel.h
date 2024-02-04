@@ -1,10 +1,9 @@
 #pragma once
 
-#include "task.h"
 #include "ss.h"
-#define ACCELERATION 300
 class Wheel
 {
+    uint16_t acceleration = 0;
     int16_t speed = 0;
     int16_t desired_speed = 0;
     unsigned long last_step = 0;
@@ -13,7 +12,8 @@ class Wheel
 public:
     Wheel(int pin_output, int pin_input = 0);
 
-    void setSpeed(int16_t speed);
+    void setSpeed(uint16_t speed);
+    void setAcceleration(uint16_t acceleration);
     virtual void step();
     virtual void init();
 };

@@ -2,28 +2,33 @@
 #include <Arduino.h>
 I2CComm *_i2ccomm;
 
-int16_t readInt16()
+uint16_t readUint16()
 {
     uint16_t value = 0;
     value = Wire.read();
     value |= Wire.read() << 8;
-    return (int16_t)value;
+    return value;
 }
 
 void I2CComm::requestEvent()
 {
-    Wire.write((uint8_t*)&this->battery_voltage, sizeof(uint16_t));
-    Wire.write((uint8_t*)&this->charger_voltage, sizeof(uint16_t));
+    uint16_t battery_value = analogRead(PIN_BATTERY_VOLTAGE);
+    uint16_t charger_value = analogRead(PIN_CHARGER_VOLTAGE);
+    Wire.write((uint8_t*)&battery_value, sizeof(uint16_t));
+    Wire.write((uint8_t*)&charger_value, sizeof(uint16_t));
 }
 
 void I2CComm::receiveEvent(int howMany)
 {
-    if (howMany != 2*sizeof(int16_t))
+    if (howMany != 3*sizeof(uint16_t))
     {
         return;
     }
-    this->left_speed = readInt16();
-    this->right_speed = readInt16();
+    this->left_wheel->setSpeed(readUint16());
+    this->right_wheel->setSpeed(readUint16());
+    uint16_t acceleration = readUint16();
+    this->left_wheel->setAcceleration(acceleration);
+    this->right_wheel->setAcceleration(acceleration);
     this->last_received_at = millis();
 }
 
@@ -40,20 +45,17 @@ void I2CComm::init()
     Wire.onReceive(::receiveEvent);
 }
 
-void I2CComm::setVoltages(uint16_t battery_voltage, uint16_t charger_voltage)
+void I2CComm::step()
 {
-    this->battery_voltage = battery_voltage;
-    this->charger_voltage = charger_voltage;
+    if (!areSpeedsValid())
+    {
+        this->left_wheel->setSpeed(0x8000);
+        this->right_wheel->setSpeed(0x8000);
+    }
 }
 
-int16_t I2CComm::getLeftSpeed()
+I2CComm::I2CComm(Wheel *left_wheel, Wheel *right_wheel): left_wheel(left_wheel), right_wheel(right_wheel)
 {
-    return areSpeedsValid() ? left_speed : 0;
-}
-
-int16_t I2CComm::getRightSpeed()
-{
-    return areSpeedsValid() ? right_speed : 0;
 }
 
 void requestEvent()
