@@ -15,14 +15,28 @@ lv_obj_t * ui_Screen1;
 lv_obj_t * ui_lblTitle;
 lv_obj_t * ui_arcBattery;
 lv_obj_t * ui_lblBattery;
+lv_obj_t * ui_Label1;
+lv_obj_t * ui_imgForward;
+lv_obj_t * ui_lblGo;
+lv_obj_t * ui_imgReverse;
+lv_obj_t * ui_imgFaster;
+lv_obj_t * ui_Label2;
+lv_obj_t * ui_Label4;
+
+
+// SCREEN: ui_Screen2
+void ui_Screen2_screen_init(void);
+lv_obj_t * ui_Screen2;
+lv_obj_t * ui_Label3;
+lv_obj_t * ui_lblError;
 lv_obj_t * ui____initial_actions0;
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
-#if LV_COLOR_DEPTH != 32
-    #error "LV_COLOR_DEPTH should be 32bit to match SquareLine Studio's settings"
+#if LV_COLOR_DEPTH != 16
+    #error "LV_COLOR_DEPTH should be 16bit to match SquareLine Studio's settings"
 #endif
-#if LV_COLOR_16_SWAP !=0
-    #error "LV_COLOR_16_SWAP should be 0 to match SquareLine Studio's settings"
+#if LV_COLOR_16_SWAP !=1
+    #error "LV_COLOR_16_SWAP should be 1 to match SquareLine Studio's settings"
 #endif
 
 ///////////////////// ANIMATIONS ////////////////////
@@ -38,6 +52,7 @@ void ui_init(void)
                                                false, LV_FONT_DEFAULT);
     lv_disp_set_theme(dispp, theme);
     ui_Screen1_screen_init();
+    ui_Screen2_screen_init();
     ui____initial_actions0 = lv_obj_create(NULL);
     lv_disp_load_scr(ui_Screen1);
 }

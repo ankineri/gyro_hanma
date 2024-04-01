@@ -2,17 +2,13 @@
 #include <Arduino.h>
 #include "task.h"
 #include "pinout.h"
+#include "gear_state.h"
 
-enum class GearState {
-    NEUTRAL,
-    FORWARD,
-    REVERSE
-};
 
 class Buttons: public Task {
     private:
         bool pedal_pressed = false;
-        GearState gear_state = GearState::NEUTRAL;
+        GearState gear_state = GearState::FORWARD;
 
         void run();
         void setup();

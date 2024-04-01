@@ -8,5 +8,6 @@ private:
     void setup();
 public:
     virtual void run();
+    void error();
     void update_speed(int16_t speed);
 };

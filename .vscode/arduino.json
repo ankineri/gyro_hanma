@@ -1,0 +1,7 @@
+{
+    "configuration": "LTO=enable,chip=88,clock=8internal,pinmapping=normal,eesave=aenable,bod=disable,millis=enabled,neopixelport=porta",
+    "board": "ATTinyCore:avr:attinyx8",
+    "port": "COM3",
+    "programmer": "arduinoasisp",
+    "sketch": "sketch\\sketch.ino"
+}

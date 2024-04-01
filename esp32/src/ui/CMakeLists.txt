@@ -1,7 +1,13 @@
 SET(SOURCES screens/ui_Screen1.c
+    screens/ui_Screen2.c
     ui.c
     components/ui_comp_hook.c
     ui_helpers.c
-    ui_events.c)
+    ui_events.cpp
+    images/ui_img_forward_png.c
+    images/ui_img_reverse_png.c
+    images/ui_img_faster_png.c
+    fonts/ui_font_large.c
+    fonts/ui_font_px76.c)
 
 add_library(ui ${SOURCES})

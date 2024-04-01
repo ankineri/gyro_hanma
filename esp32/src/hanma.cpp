@@ -3,6 +3,13 @@
 #include "hanma.h"
 #include "pinout.h"
 
+#define Wire ERROR
+
+#define BATTERY_MULTIPLIER (5.0 / 1024.0 * 10000 / 1200 * 39.8 / 32.3)
+#define CHARGER_MULTIPLIER (5.0 / 1024.0 * 10000 / 1200)
+// #define Wire1 TheWire
+// SoftWire Wire1(PIN_SDA, PIN_SCL);
+
 void Hanma::send(int16_t speed)
 {
     int32_t speed32 = speed;
@@ -36,7 +43,29 @@ void Hanma::send(int16_t speed)
 void Hanma::run()
 {
     send(speed);
+    read_voltages();
     this->sleep(100);
+}
+
+void Hanma::read_voltages()
+{
+    if (Wire1.available() > 4)
+    {
+        while (Wire1.available())
+        {
+            Wire1.read();
+        }
+    }
+    if (Wire1.available() == 4)
+    {
+        uint16_t ints[2];
+        Wire1.readBytes((uint8_t *)ints, 4);
+        charger_voltage = ints[0];
+        battery_voltage = ints[1];
+
+        last_voltage_read = millis();
+    }
+    Wire1.requestFrom(0x08, 4);
 }
 
 int16_t Hanma::get_speed()
@@ -61,5 +90,23 @@ void Hanma::set_acceleration(int16_t acceleration)
 
 void Hanma::setup()
 {
-    Wire1.begin(PIN_SDA, PIN_SCL);
+    Wire1.begin(PIN_SDA, PIN_SCL, 1000UL);
+    Wire1.setTimeOut(100);
+    // Wire1.enablePullups();
+    // Wire1.setClock(1000UL);
+}
+
+unsigned long Hanma::get_voltages_age()
+{
+    return millis() - last_voltage_read;
+}
+
+float Hanma::get_battery_voltage()
+{
+    return battery_voltage * BATTERY_MULTIPLIER;
+}
+
+float Hanma::get_charger_voltage()
+{
+    return charger_voltage * CHARGER_MULTIPLIER;
 }
