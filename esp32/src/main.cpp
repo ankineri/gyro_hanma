@@ -48,6 +48,7 @@ void setup()
     params.acc_fwd = NORMAL_ACCELERATION;
     params.acc_back = NORMAL_ACCELERATION;
     params.acc_slwdn = FAST_ACCELERATION;
+    params.spd_coef = 1.0;
 
     tasks.push_back(&hanma);
     tasks.push_back(&led);
@@ -97,9 +98,16 @@ bool error = false;
 
 void trigger_error(const char *message)
 {
+    hanma.set_speed(0);
+    hanma.set_acceleration(params.acc_slwdn);
     ui.error(message);
     error = true;
     led.error();
+}
+
+int16_t clamp_speed(int speed)
+{
+    return max(-ABSOLUTE_MAXIMUM_SPEED, min(ABSOLUTE_MAXIMUM_SPEED, speed));
 }
 
 void loop()
@@ -108,15 +116,17 @@ void loop()
         return;
     }
     lv_timer_handler();
-
-    if (error) {
-        return;
-    }
-
     for (auto task : tasks)
     {
         task->step();
     }
+    if (error) {
+        hanma.set_speed(0);
+        hanma.set_acceleration(params.acc_slwdn);        
+        return;
+    }
+
+
 
     ui.set_gear_state(buttons.get_gear_state());
     ui.set_pedal_state(buttons.is_pedal_pressed());
@@ -132,16 +142,16 @@ void loop()
     } else {
         if (buttons.get_gear_state() == GearState::FORWARD)
         {
-            hanma.set_speed(params.spd_fwd * params.spd_coef);
+            hanma.set_speed(clamp_speed(params.spd_fwd * params.spd_coef));
             hanma.set_acceleration(params.acc_fwd);
         } else if (buttons.get_gear_state() == GearState::FASTER)
         {
-            hanma.set_speed(params.spd_fast * params.spd_coef);
+            hanma.set_speed(clamp_speed(params.spd_fast * params.spd_coef));
             hanma.set_acceleration(params.acc_fwd);
         }
         else if (buttons.get_gear_state() == GearState::REVERSE)
         {
-            hanma.set_speed(params.spd_back * params.spd_coef);
+            hanma.set_speed(clamp_speed(params.spd_back * params.spd_coef));
             hanma.set_acceleration(params.acc_back);
         }
     }

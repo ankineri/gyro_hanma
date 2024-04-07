@@ -7,3 +7,5 @@
 
 #define WIFI_SSID "Hanma"
 #define WIFI_PASSWORD "2Y-LYBQzeipA"
+
+#define ABSOLUTE_MAXIMUM_SPEED 700
