@@ -1,0 +1,64 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="jquery-min.js"></script>
+    <script src="scripts.js"></script>
+    <meta charset="UTF-8">
+    <title>
+        Hanma
+    </title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body>
+    <h1>Hanma Control</h1>
+    <table>
+        <tr>
+            <td colspan="2" class="row-title">Settings</td>
+        </tr>
+        <tr>
+            <td>Speed coefficient</td>
+            <td><input type="text" name="spd-coef" id="spd-coef"></td>
+        </tr>
+
+        <tr>
+            <td colspan="2" class="row-title">Speeds</td>
+        </tr>
+        <tr>
+            <td>Faster speed</td>
+            <td><input type="text" name="spd-fast" id="spd-fast"></td>
+        </tr>
+        <tr>
+            <td>Forward speed</td>
+            <td><input type="text" name="spd-fwd" id="spd-fwd"></td>
+        </tr>
+        <tr>
+            <td>Reverse speed</td>
+            <td><input type="text" name="spd-back" id="spd-back"></td>
+        </tr>
+        <tr>
+            <td colspan="2" class="row-title">Accelerations</td>
+        </tr>
+        <tr>
+            <td>Forward accel</td>
+            <td><input type="text" name="acc-fwd" id="acc-fwd"></td>
+        </tr>
+        <tr>
+            <td>Reverse accel</td>
+            <td><input type="text" name="acc-back" id="acc-back"></td>
+        </tr>
+        <tr>
+            <td>Slowdown accel</td>
+            <td><input type="text" name="acc-slwdn" id="acc-slwdn"></td>
+        </tr>
+        <tr>
+            <td colspan="2" class="td-button"><button id="save-btn">Save settings</button></td>
+        </tr>
+        <tr id="result">
+            <td colspan="2"><div style="display:none" id="error-container" class="error"><br/> <span id="result-error"></span></div><div style="display:none" class="success" id="success">Success!</div></td>
+        </tr>
+    </table>
+</body>
+
+</html>

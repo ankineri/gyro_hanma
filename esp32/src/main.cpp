@@ -13,16 +13,22 @@
 #include "ui.h"
 #include "gear_state.h"
 #include "consts.h"
+#include "web.h"
 
 #define WIFI_SSID "Hanma-AP"
 #define WIFI_PASSWORD "2Y-LYBQzeipA"
 
 vector<Task *> tasks;
 
+ConfigurableParams params;
+
 Hanma hanma;
 Led led;
 Buttons buttons;
 Ui ui;
+WebServer web(params, []() {
+    // ui.update();
+});
 
 void OnButtonClicked(lv_event_t *e)
 {
@@ -36,6 +42,13 @@ void OnButtonClicked(lv_event_t *e)
 
 void setup()
 {
+    params.spd_fwd = NORMAL_SPEED;
+    params.spd_back = REVERSE_SPEED;
+    params.spd_fast = FAST_SPEED;
+    params.acc_fwd = NORMAL_ACCELERATION;
+    params.acc_back = NORMAL_ACCELERATION;
+    params.acc_slwdn = FAST_ACCELERATION;
+
     tasks.push_back(&hanma);
     tasks.push_back(&led);
     tasks.push_back(&buttons);
@@ -48,9 +61,11 @@ void setup()
     log_i("Free PSRAM: %d bytes", ESP.getPsramSize());
     log_i("SDK version: %s", ESP.getSdkVersion());
 
-    WiFi.mode(WIFI_AP);
-    WiFi.softAPConfig(IPAddress(192, 168, 4, 1), IPAddress(192, 168, 4, 1), IPAddress(255, 255, 255, 0));
-    WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
+    web.setup_web();
+
+    // WiFi.mode(WIFI_AP);
+    // WiFi.softAPConfig(IPAddress(192, 168, 4, 1), IPAddress(192, 168, 4, 1), IPAddress(255, 255, 255, 0));
+    // WiFi.softAP(WIFI_SSID, WIFI_PASSWORD);
 
     // #ifdef BOARD_HAS_SPEAK
     //     // Connect to WiFi
@@ -69,7 +84,7 @@ void setup()
     smartdisplay_init();
 
     auto disp = lv_disp_get_default();
-    lv_disp_set_rotation(disp, LV_DISP_ROT_90);
+    lv_disp_set_rotation(disp, LV_DISP_ROT_270);
     ui_init();
     for (auto task : tasks)
     {
@@ -113,17 +128,21 @@ void loop()
     if (!buttons.is_pedal_pressed())
     {
         hanma.set_speed(0);
+        hanma.set_acceleration(params.acc_slwdn);
     } else {
         if (buttons.get_gear_state() == GearState::FORWARD)
         {
-            hanma.set_speed(NORMAL_SPEED);
+            hanma.set_speed(params.spd_fwd * params.spd_coef);
+            hanma.set_acceleration(params.acc_fwd);
         } else if (buttons.get_gear_state() == GearState::FASTER)
         {
-            hanma.set_speed(FAST_SPEED);
+            hanma.set_speed(params.spd_fast * params.spd_coef);
+            hanma.set_acceleration(params.acc_fwd);
         }
         else if (buttons.get_gear_state() == GearState::REVERSE)
         {
-            hanma.set_speed(REVERSE_SPEED);
+            hanma.set_speed(params.spd_back * params.spd_coef);
+            hanma.set_acceleration(params.acc_back);
         }
     }
 

@@ -1,0 +1,48 @@
+.center {
+    text-align: center;
+    width: 100%;
+}
+
+.row-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+    font-family: sans-serif;
+    background-color: aliceblue;
+
+}
+
+td {
+    padding: 0.5em;
+    font-size: 1.2em;
+    font-family: monospace;
+}
+
+#save-btn {
+    width: 100%;
+    /* padding: 0.1em; */
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    margin: 0;
+    height: 100%;
+    display: block;
+    /* border-style: inset; */
+    background-color: aquamarine;
+    border-radius: 4px;
+}
+
+.td-button {
+    padding: 0;
+    padding-top: 0.5em;
+}
+
+.error {
+    color: red;
+}
+.success {
+    color:darkgreen;
+}
