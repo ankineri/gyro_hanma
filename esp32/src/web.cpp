@@ -8,6 +8,13 @@ WebServer::WebServer(ConfigurableParams &params, std::function<void()> on_change
 {
 }
 
+static bool is_valid(const ConfigurableParams &params)
+{
+    if (params.spd_coef <= 0)
+        return false;
+    
+}
+
 void WebServer::setup_web()
 {
     if (SPIFFS.begin(true))

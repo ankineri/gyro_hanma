@@ -14,9 +14,7 @@
 #include "gear_state.h"
 #include "consts.h"
 #include "web.h"
-
-#define WIFI_SSID "Hanma-AP"
-#define WIFI_PASSWORD "2Y-LYBQzeipA"
+#include <mutex>
 
 vector<Task *> tasks;
 
@@ -25,9 +23,12 @@ ConfigurableParams params;
 Hanma hanma;
 Led led;
 Buttons buttons;
-Ui ui;
+Ui ui(params);
+std::mutex mtx;
+
 WebServer web(params, []() {
-    // ui.update();
+    std::unique_lock<std::mutex> lock(mtx);
+    ui.update();
 });
 
 void OnButtonClicked(lv_event_t *e)
@@ -63,6 +64,7 @@ void setup()
     log_i("SDK version: %s", ESP.getSdkVersion());
 
     web.setup_web();
+    
 
     // WiFi.mode(WIFI_AP);
     // WiFi.softAPConfig(IPAddress(192, 168, 4, 1), IPAddress(192, 168, 4, 1), IPAddress(255, 255, 255, 0));
@@ -91,6 +93,7 @@ void setup()
     {
         task->setup();
     }
+    ui.update();
 }
 unsigned long last_updated_gear = 0;
 int i = 0;
@@ -115,6 +118,7 @@ void loop()
     if (millis() < 200) {
         return;
     }
+    std::unique_lock<std::mutex> lock(mtx);
     lv_timer_handler();
     for (auto task : tasks)
     {
@@ -163,7 +167,7 @@ void loop()
         return;
     }
 
-    if (hanma.get_voltages_age() > 10000)
+    if (hanma.get_voltages_age() > MAX_VOLTAGE_AGE)
     {
         trigger_error("Voltage read timeout.\nTalk to ankineri@.");
         return;

@@ -2,6 +2,24 @@
 
 #include "ui.h"
 #include "ui/ui.h"
+
+Ui::Ui(const ConfigurableParams &params) : params(params)
+{
+}
+
+void Ui::update()
+{
+    std::string speeds = "SPEED\n";
+    speeds += "FST: " + std::to_string(params.spd_fast) + "\n";
+    speeds += "FWD: " + std::to_string(params.spd_fwd) + "\n";
+    speeds += "REV: " + std::to_string(params.spd_back);
+    Serial.println(speeds.c_str());
+    lv_label_set_text(ui_lblSpd, speeds.c_str());
+    char coef[10];
+    snprintf(coef, 10, "COEF: %.1f", params.spd_coef);
+    lv_label_set_text(ui_lblCoef, coef);
+}
+
 void Ui::set_gear_state(GearState gear_state)
 {
     lv_obj_add_flag(ui_imgForward, LV_OBJ_FLAG_HIDDEN);
@@ -23,11 +41,8 @@ void Ui::set_gear_state(GearState gear_state)
 
 void Ui::set_pedal_state(bool pedal_state)
 {
-
-        lv_obj_set_style_bg_color(ui_lblGo, pedal_state ? lv_color_hex(0x00FF00) : lv_color_hex(0xBEBEBE), LV_PART_MAIN | LV_STATE_DEFAULT);
-
+    lv_obj_set_style_bg_color(ui_lblGo, pedal_state ? lv_color_hex(0x00FF00) : lv_color_hex(0xBEBEBE), LV_PART_MAIN | LV_STATE_DEFAULT);
 }
-
 
 void Ui::error(std::string message)
 {
